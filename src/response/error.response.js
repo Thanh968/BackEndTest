@@ -2,12 +2,14 @@
 
 const ERROR_CODE = {
     UNAUTHORIZED: 401,
-    CONFLICT: 409
+    CONFLICT: 409,
+    INTERNAL_SERVER: 500,
 };
 
 const ERROR_MESSAGE = {
-    UNAUTHORIZED: 401,
-    CONFLICT: 409,
+    UNAUTHORIZED: "Unauthorized",
+    CONFLICT: "conflict",
+    INTERNAL_SERVER: "Internal server error",
 };
 
 class ErrorResponse extends Error {
@@ -29,8 +31,15 @@ class ConflictErrorResponse extends ErrorResponse {
     }
 }
 
+class InternalServerErrorResponse extends ErrorResponse {
+    constructor({message = ERROR_MESSAGE.INTERNAL_SERVER, statusCode = ERROR_CODE.INTERNAL_SERVER}) {
+        super({message, statusCode});
+    }
+}
+
 module.exports = {
     UnauthorizedErrorResponse,
     ConflictErrorResponse,
+    InternalServerErrorResponse,
 };
 

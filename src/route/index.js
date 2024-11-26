@@ -5,11 +5,6 @@ const route = express.Router();
 
 route.use(asyncErrorHandling(checkApiKey));
 route.use(asyncErrorHandling(checkPermission("0001")));
-
-route.get('/', (req, res, next) => {
-    return res.status(200).json({
-        message: "Hello Client",
-    })
-});
+route.use('/api/v1', require('./access'));
 
 module.exports = route;

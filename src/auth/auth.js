@@ -2,6 +2,7 @@
 
 const {UnauthorizedErrorResponse} = require('../response/error.response');
 const apiKeyService = require('../services/apiKey.service');
+const JWT = require(`jsonwebtoken`);
 
 const HEADER = {
     API_KEY: 'x-api-key',
@@ -26,7 +27,6 @@ const checkApiKey = async (req, res, next) => {
 
 const checkPermission = (permission) => {
     return (req, res, next) => {
-        console.log(req.apiKeyObj);
         if (!req.apiKeyObj.permissions) {
             throw new UnauthorizedErrorResponse({message: `permission not found`});
         }
@@ -39,9 +39,26 @@ const checkPermission = (permission) => {
 
         return next();
     }
-} 
+}
+
+const createTokenPair = (payload, publicKey, privateKey) => {
+    const accessToken = JWT.sign(payload, publicKey, {
+        expiresIn: '1h'
+    });
+    const refreshedToken = JWT.sign(payload, privateKey, {
+        expiresIn: '5h',
+    });
+    return {accessToken, refreshedToken};
+}
+
+const verifyToken = (token, publicKey) => {
+    const payload = JWT.verify(token, publicKey);
+    return payload;
+}
 
 module.exports = {
     checkApiKey,
-    checkPermission
+    checkPermission,
+    createTokenPair,
+    verifyToken,
 };

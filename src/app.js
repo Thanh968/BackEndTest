@@ -19,7 +19,7 @@ require('./dbs/init.db');
 
 // routes
 
-app.use('/api/v1', route);
+app.use(route);
 
 // handling error
 
