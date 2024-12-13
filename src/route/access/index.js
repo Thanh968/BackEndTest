@@ -9,10 +9,6 @@ route.post(`/shop/signup`,asyncErrorHandling(AccessController.signUp));
 route.post(`/shop/login`, asyncErrorHandling(AccessController.login));
 
 route.use(asyncErrorHandling(checkAuthentication));
-route.get(`/shop/example`, (req, res, next) => {
-    return res.status(200).json({
-        message: "Hello client",
-    });
-});
+route.post(`/shop/logout`, asyncErrorHandling(AccessController.LogOut));
 
 module.exports = route;

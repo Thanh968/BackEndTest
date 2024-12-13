@@ -13,6 +13,11 @@ class KeyTokenService {
         const holderKey = await keyTokenModel.findOne({userId: userId}).lean();
         return holderKey;
     }
+
+    static async deleteKeyToken(userId) {
+        const key = await keyTokenModel.deleteOne({userId: userId});
+        return key;
+    }
 }
 
 module.exports = KeyTokenService;

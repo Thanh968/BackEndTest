@@ -8,6 +8,18 @@ const { getDataField } = require("../ultils");
 const bcrypt = require(`bcrypt`);
 
 class AccessService {
+    static async logOut(userId) {
+        const holderKey = await KeyTokenService.findKeyByUserId(userId);
+
+        if (!holderKey) {
+            throw new ConflictErrorResponse({message: `user id is not exist`});
+        }
+
+        const key = await KeyTokenService.deleteKeyToken(userId);
+
+        return {message: "log out success"};
+    } 
+
     static async logIn({email, password}) {
         const holderShop = await shopService.findShopByEmail(email);
 
