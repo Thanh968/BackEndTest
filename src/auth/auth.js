@@ -1,11 +1,15 @@
 'use strict'
 
-const {UnauthorizedErrorResponse} = require('../response/error.response');
+const {UnauthorizedErrorResponse, BadRequestErrorResponse} = require('../response/error.response');
 const apiKeyService = require('../services/apiKey.service');
 const JWT = require(`jsonwebtoken`);
+const KeyTokenService = require('../services/keyToken.service');
 
 const HEADER = {
     API_KEY: 'x-api-key',
+    USER_ID: 'x-user-id',
+    AUTHORIZATION: 'authorization',
+    REFRESH_TOKEN: 'refresh-token',
 };
 
 const checkApiKey = async (req, res, next) => {
@@ -56,9 +60,63 @@ const verifyToken = (token, publicKey) => {
     return payload;
 }
 
+const checkAuthentication = async (req, res, next) => {
+    const userId = req.headers[HEADER.USER_ID];
+
+    if (!userId) {
+        throw new BadRequestErrorResponse({message: `User id is missing`});
+    }
+
+    const keyTokenForUser = await KeyTokenService.findKeyByUserId(userId);
+
+    if (!keyTokenForUser) {
+        throw new UnauthorizedErrorResponse({message: "User is not exist"});
+    }
+
+    if (req.headers[HEADER.REFRESH_TOKEN]) {
+        try {
+            const refreshToken = req.headers[HEADER.REFRESH_TOKEN];
+            const decodeData = verifyToken(refreshToken, keyTokenForUser.privateKey);
+
+            if (userId !== decodeData.userId) {
+                throw new UnauthorizedErrorResponse({message: `user id not match`});
+            }
+
+            req.keyTokens = keyTokenForUser;
+            req.decodeData = decodeData;
+
+            return next();
+        } catch (error){
+            throw new UnauthorizedErrorResponse({message: error.message});
+        }
+    }
+
+    const accessToken = req.headers[HEADER.AUTHORIZATION];
+
+    if (!accessToken) {
+        throw new BadRequestErrorResponse({message: `require info missing`});
+    }
+
+    try {
+        const decodeData = verifyToken(accessToken, keyTokenForUser.publicKey);
+
+        if (userId !== decodeData.userId) {
+            throw new UnauthorizedErrorResponse({message: `User id not match`});
+        }
+
+        req.keyTokens = keyTokenForUser;
+        req.decodeData = decodeData;
+
+        return next();
+    } catch (error) {
+        throw new UnauthorizedErrorResponse({message: error.message});
+    }
+}
+
 module.exports = {
     checkApiKey,
     checkPermission,
     createTokenPair,
     verifyToken,
+    checkAuthentication,
 };

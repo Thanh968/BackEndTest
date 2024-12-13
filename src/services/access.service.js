@@ -1,13 +1,40 @@
 `use strict`
 const shopService = require(`./shop.service`);
 const KeyTokenService = require(`./keyToken.service`);
-const {ConflictErrorResponse, InternalServerErrorResponse} = require(`../response/error.response`);
+const {ConflictErrorResponse, InternalServerErrorResponse, UnauthorizedErrorResponse} = require(`../response/error.response`);
 const crypto = require(`crypto`);
 const { createTokenPair } = require("../auth/auth");
 const { getDataField } = require("../ultils");
 const bcrypt = require(`bcrypt`);
 
 class AccessService {
+    static async logIn({email, password}) {
+        const holderShop = await shopService.findShopByEmail(email);
+
+        if (!holderShop) {
+            throw new UnauthorizedErrorResponse({message: "This email has not been registed"});
+        }
+
+        const isMatchPassword = await bcrypt.compare(password, holderShop.password);
+
+        if (!isMatchPassword) {
+            throw new UnauthorizedErrorResponse({message: "Invalid password"});
+        }
+
+        const publicKey = crypto.randomBytes(64).toString('hex');
+        const privateKey = crypto.randomBytes(64).toString('hex');
+        const payload = {email: email, userId: holderShop._id};
+
+        const tokens = createTokenPair(payload,publicKey, privateKey);
+
+        await KeyTokenService.saveKeyToken({userId: holderShop._id, publicKey: publicKey, privateKey: privateKey, refreshedToken: tokens.refreshedToken});
+
+        return {
+            tokens,
+            metadata: getDataField(holderShop, ['_id', 'email', 'name']),
+        };
+    }
+
     static async signUp({email, name, password}) {
         const holderShop = await shopService.findShopByEmail(email);
 
