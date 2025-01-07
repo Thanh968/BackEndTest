@@ -6,8 +6,37 @@ const crypto = require(`crypto`);
 const { createTokenPair } = require("../auth/auth");
 const { getDataField } = require("../ultils");
 const bcrypt = require(`bcrypt`);
+const ShopService = require("./shop.service");
 
 class AccessService {
+
+    static async handleRefreshToken({refreshToken, decodeData, keyToken}) {
+        const {userId, email} = decodeData;
+
+        if (keyToken.usedRefreshedToken.includes(refreshToken)) {
+            await KeyTokenService.deleteKeyToken(userId);
+            throw new ConflictErrorResponse({message: `Oops!!! Something wrong happens to your account. Please login again.`});
+        }
+
+        if (refreshToken !== keyToken.refreshedToken) {
+            throw new ConflictErrorResponse({message: `refresh token not match`});
+        }
+
+        const holderShop = await ShopService.findShopByEmail(email);
+
+        if (!holderShop) {
+            throw new UnauthorizedErrorResponse({message: `This email is not registried`});
+        }
+
+        const newTokens = createTokenPair({email: email, userId: userId}, keyToken.publicKey, keyToken.privateKey);
+
+        await KeyTokenService.updateRefreshToken({usedRefreshToken: refreshToken, newRefeshToken: newTokens.refreshedToken, userId});
+
+        return {
+            newTokens,
+        };
+    }
+
     static async logOut(userId) {
         const holderKey = await KeyTokenService.findKeyByUserId(userId);
 

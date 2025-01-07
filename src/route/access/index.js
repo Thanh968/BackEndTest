@@ -10,5 +10,6 @@ route.post(`/shop/login`, asyncErrorHandling(AccessController.login));
 
 route.use(asyncErrorHandling(checkAuthentication));
 route.post(`/shop/logout`, asyncErrorHandling(AccessController.LogOut));
+route.post(`/shop/handle-refesh-token`, asyncErrorHandling(AccessController.handleRefreshToken));
 
 module.exports = route;
