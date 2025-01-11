@@ -5,6 +5,7 @@ const route = express.Router();
 
 route.use(asyncErrorHandling(checkApiKey));
 route.use(asyncErrorHandling(checkPermission("0001")));
-route.use('/api/v1', require('./access'));
+route.use('/api/v1/access', require('./access'));
+route.use('/api/v1/products', require('./product'));
 
 module.exports = route;
