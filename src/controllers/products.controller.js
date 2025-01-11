@@ -9,6 +9,20 @@ class ProductsController {
             metadata: await ProductService.createProduct(req.body),
         }).send(res);
     }
+
+    static async findAllDraftProducts(req, res, next) {
+        new OkSuccessResponse({
+            message: `Draft products fetched successfully`,
+            metadata: await ProductService.findAllDraftProduct({product_shop: req.decodeData.userId, skip: req.params.skip}),
+        }).send(res);
+    }
+
+    static async findAllPublishProducts(req, res, next) {
+        new OkSuccessResponse({
+            message: `Publish products fetched successfully`,
+            metadata: await ProductService.findAllPublishedProduct({product_shop: req.decodeData.userId, skip: req.params.skip}),
+        }).send(res);
+    }
 }
 
 module.exports = ProductsController

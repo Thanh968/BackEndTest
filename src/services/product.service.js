@@ -2,6 +2,7 @@
 
 const {products, clothes, electronics, furnitures} = require('../models/products.model');
 const {ConflictErrorResponse} = require(`../response/error.response`);
+const {findAllProductsWithQuery} = require(`../models/repositories/product.repositories`);
 
 class Product {
     constructor({
@@ -134,6 +135,26 @@ class ProductFactory {
         }
 
         return new ProductClass(payload).createProduct();
+    }
+
+    static async findAllDraftProduct({product_shop, skip, limit = 50}) {
+        const query = {
+            product_shop: product_shop,
+            isDraft: true,
+        };
+
+        const result = await findAllProductsWithQuery({query,limit, skip});
+        return result;
+    }
+
+    static async findAllPublishedProduct({product_shop, skip, limit = 50}) {
+        const query = {
+            product_shop: product_shop,
+            isPublish: true,
+        };
+
+        const result = await findAllProductsWithQuery({query, limit, skip});
+        return result;
     }
 }
 
