@@ -2,7 +2,7 @@
 
 const {products, clothes, electronics, furnitures} = require('../models/products.model');
 const {ConflictErrorResponse} = require(`../response/error.response`);
-const {findAllProductsWithQuery, publishAProduct, draftAProduct} = require(`../models/repositories/product.repositories`);
+const {findAllProductsWithQuery, publishAProduct, draftAProduct, findProductByUser} = require(`../models/repositories/product.repositories`);
 
 class Product {
     constructor({
@@ -164,6 +164,11 @@ class ProductFactory {
 
     static async draftAProduct({product_id, product_shop}) {
         const result = await draftAProduct({product_id, product_shop});
+        return result;
+    }
+
+    static async findProductByUser({keySearch}) {
+        const result = await findProductByUser({keySearch});
         return result;
     }
 }

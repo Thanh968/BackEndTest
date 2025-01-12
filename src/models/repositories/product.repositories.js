@@ -63,4 +63,27 @@ const draftAProduct = async ({product_id, product_shop}) => {
     return result;
 }
 
-module.exports = { findAllProductsWithQuery, publishAProduct, draftAProduct };
+const findProductByUser = async ({keySearch}) => {
+    const textRegexp = new RegExp(keySearch);
+    const  result = await products.find({
+        $text: {
+            $search: textRegexp,
+        },
+        isPublish: true,
+    }, {
+        score: {
+            $meta: "textScore",
+        },
+    })
+    .sort({
+        score: {
+            $meta: "textScore",
+        },
+    })
+    .lean()
+    .exec();
+
+    return result;
+}
+
+module.exports = { findAllProductsWithQuery, publishAProduct, draftAProduct, findProductByUser };
