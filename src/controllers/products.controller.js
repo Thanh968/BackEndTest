@@ -23,6 +23,20 @@ class ProductsController {
             metadata: await ProductService.findAllPublishedProduct({product_shop: req.decodeData.userId, skip: req.params.skip}),
         }).send(res);
     }
+
+    static async publishAProduct(req, res, next) {
+        new OkSuccessResponse({
+            message: `Product published successfully`,
+            metadata: await ProductService.publishAProduct({product_id: req.params.product_id, product_shop: req.decodeData.userId}),
+        }).send(res);
+    }
+
+    static async draftAProduct(req, res, next) {
+        new OkSuccessResponse({
+            message: `Product drafted successfully`,
+            metadata: await ProductService.draftAProduct({product_id: req.params.product_id, product_shop: req.decodeData.userId}),
+        }).send(res);
+    }
 }
 
 module.exports = ProductsController

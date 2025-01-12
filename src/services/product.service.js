@@ -2,7 +2,7 @@
 
 const {products, clothes, electronics, furnitures} = require('../models/products.model');
 const {ConflictErrorResponse} = require(`../response/error.response`);
-const {findAllProductsWithQuery} = require(`../models/repositories/product.repositories`);
+const {findAllProductsWithQuery, publishAProduct, draftAProduct} = require(`../models/repositories/product.repositories`);
 
 class Product {
     constructor({
@@ -41,7 +41,7 @@ class Clothes extends Product {
             _id: newClothesAttribute._id
         });
 
-        if (!newPRoduct) {
+        if (!newProduct) {
             const deletedDoc = await clothes.findByIdAndDelete(newClothesAttribute._id);
 
             if (!deletedDoc) {
@@ -154,6 +154,16 @@ class ProductFactory {
         };
 
         const result = await findAllProductsWithQuery({query, limit, skip});
+        return result;
+    }
+
+    static async publishAProduct({product_id, product_shop}) {
+        const result = await publishAProduct({product_id, product_shop});
+        return result;
+    }
+
+    static async draftAProduct({product_id, product_shop}) {
+        const result = await draftAProduct({product_id, product_shop});
         return result;
     }
 }
