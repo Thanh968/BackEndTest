@@ -6,6 +6,12 @@ const getDataField = (object, fields) => {
     return result;
 }
 
+const getFields = (select = []) => {
+    const result = Object.fromEntries(select.map((field) => [field, 1]));
+    return result;
+}
+
 module.exports = {
     getDataField,
+    getFields
 };

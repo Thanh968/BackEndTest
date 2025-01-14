@@ -2,12 +2,13 @@
 
 const {products} = require(`../products.model`);
 const {ConflictErrorResponse} = require(`../../response/error.response`);
+const {getFields} = require(`../../ultils/index`);
 
 const findAllProductsWithQuery = async ({query, limit, skip}) => {
     const result = await products.find(query)
     .populate('product_shop', "name -_id")
-    .limit(limit)
     .skip(skip)
+    .limit(limit)
     .lean()
     .exec();
     
@@ -86,4 +87,32 @@ const findProductByUser = async ({keySearch}) => {
     return result;
 }
 
-module.exports = { findAllProductsWithQuery, publishAProduct, draftAProduct, findProductByUser };
+const findAllProducts = async ({limit = 50, page = 1, sort = 'ctime', select}) => {
+    const skip = page - 1;
+    const sortBy = sort === 'ctime' ? {createdAt: -1} : {createdAt: 1};
+    const result = await products.find({
+        isPublish: true,
+    })
+    .skip(skip)
+    .limit(limit)
+    .sort(sortBy)
+    .select(getFields(select))
+    .lean()
+    .exec();
+
+    return result;
+}
+
+const findProduct = async ({product_id, select}) => {
+    const result = await products.findOne({
+        _id: product_id,
+        isPublish: true, 
+    })
+    .select(getFields(select))
+    .lean()
+    .exec();
+
+    return result;
+}
+
+module.exports = { findAllProductsWithQuery, publishAProduct, draftAProduct, findProductByUser, findAllProducts, findProduct };

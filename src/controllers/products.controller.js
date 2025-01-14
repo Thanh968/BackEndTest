@@ -44,6 +44,26 @@ class ProductsController {
             metadata: await ProductService.findProductByUser(req.params),
         }).send(res);
     }
+
+    static async findAllProducts(req, res, next) {
+        new OkSuccessResponse({
+            message: `Products fetched successfully`,
+            metadata: await ProductService.findAllProducts({
+                page: req.params.page,
+                select: req.body.select,
+            }),
+        }).send(res);
+    }
+
+    static async findProduct(req, res, next) {
+        new OkSuccessResponse({
+            message: `Product fetched successfully`,
+            metadata: await ProductService.findProduct({
+                product_id: req.params.id,
+                select: req.body.select,
+            }),
+        }).send(res);
+    }
 }
 
 module.exports = ProductsController
