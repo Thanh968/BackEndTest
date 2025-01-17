@@ -64,6 +64,16 @@ class ProductsController {
             }),
         }).send(res);
     }
+
+    static async updateProduct(req, res, next) {
+        new OkSuccessResponse({
+            message: `Product updated successfully`,
+            metadata: await ProductService.updateProduct({
+                product_shop: req.decodeData.userId,
+                payload: req.body,
+            }),
+        }).send(res);
+    }
 }
 
 module.exports = ProductsController

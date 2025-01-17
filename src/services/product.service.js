@@ -2,13 +2,23 @@
 
 const {products, clothes, electronics, furnitures} = require('../models/products.model');
 const {ConflictErrorResponse} = require(`../response/error.response`);
+const { 
+    checkRequiredFields, 
+    getFields, 
+    removeNullField,
+    getDataField
+} = require(`../ultils/index`);
 const {
     findAllProductsWithQuery, 
     publishAProduct, 
     draftAProduct, 
     findProductByUser,
     findAllProducts, 
-    findProduct
+    findProduct,
+    updateProduct,
+    updateClothes,
+    updateElectronics,
+    updateFurnitures
 } = require(`../models/repositories/product.repositories`);
 
 class Product {
@@ -29,6 +39,21 @@ class Product {
     async createProduct() {
         const newProduct = await products.create(this);
         return newProduct;
+    }
+
+    async updateProduct() {
+        const filter = {
+            _id: this.product_id,
+            product_shop: this.product_shop,
+        };
+        const updateData = this;
+        const result = await updateProduct({filter, updateData});
+
+        if (!result) {
+            throw new ConflictErrorResponse({message: `Error: fail to update product`});
+        }
+
+        return result;
     }
 }
 
@@ -60,6 +85,27 @@ class Clothes extends Product {
 
         return newProduct;
     }
+
+    async updateProduct() {
+        if (this.product_attributes) {
+            const filter = {
+                _id: this.product_id,
+                product_shop: this.product_shop,
+            };
+            const updateData = this;
+            const updateAttributes = await updateClothes({filter, updateData});
+
+            if (!updateAttributes) {
+                throw new ConflictErrorResponse({message: `Error: fail to update product`});
+            }
+
+            this.product_attributes = getDataField(updateAttributes, ['brand', 'size', 'color']);
+        }
+
+        const result = await super.updateProduct();
+
+        return result;
+    }
 }
 
 class Electronic extends Product {
@@ -89,6 +135,27 @@ class Electronic extends Product {
         }
 
         return newProduct;
+    }
+
+    async updateProduct() {
+        if (this.product_attributes) {
+            const filter = {
+                _id: this.product_id,
+                product_shop: this.product_shop,
+            };
+            const updateData = this;
+            const updateAttributes = await updateElectronics({filter, updateData});
+
+            if (!updateAttributes) {
+                throw new ConflictErrorResponse({message: `Error: fail to update product`});
+            }
+
+            this.product_attributes = getDataField(updateAttributes, ['manufacturer', 'model', 'color']);
+        }
+
+        const result = await super.updateProduct();
+
+        return result;
     }
 }
 
@@ -123,6 +190,27 @@ class Furniture extends Product {
         }
 
         return newProduct;
+    }
+
+    async updateProduct() {
+        if (this.product_attributes) {
+            const filter = {
+                _id: this.product_id,
+                product_shop: this.product_shop,
+            };
+            const updateData = this;
+            const updateAttributes = await updateFurnitures({filter, updateData});
+
+            if (!updateAttributes) {
+                throw new ConflictErrorResponse({message: `Error: fail to update product`});
+            }
+
+            this.product_attributes = getDataField(updateAttributes, ['brand', 'size', 'material']);
+        }
+
+        const result = await super.updateProduct();
+
+        return result;
     }
 }
 
@@ -187,6 +275,35 @@ class ProductFactory {
     static async findProduct({product_id, select}) {
         const result = await findProduct({product_id, select});
         console.log(result);
+        return result;
+    }
+
+    static async updateProduct({product_shop, payload}) {
+        payload.product_shop = product_shop;
+        const updateData = removeNullField(payload);
+
+        if (!checkRequiredFields(updateData, ['product_id', 'product_type'])) {
+            throw new ConflictErrorResponse({message: `Error: product_id and product_type are required`});
+        }
+
+        if (updateData.product_attributes) {
+            updateData.product_attributes = removeNullField(updateData.product_attributes);
+
+            if (Object.keys(updateData.product_attributes).length === 0) {
+                delete updateData.product_attributes;
+            }
+        }
+
+        const productClass = ProductFactory.productRegistry[updateData.product_type];
+
+        if (!productClass) {
+            throw new ConflictErrorResponse({message: `Error: product type ${updateData.product_type} is not registered`});
+        }
+
+        const newInstance = new productClass(updateData);
+        newInstance.product_id = updateData.product_id;
+        const result = await newInstance.updateProduct();
+
         return result;
     }
 }

@@ -1,6 +1,6 @@
 "use strict"
 
-const {products} = require(`../products.model`);
+const {products, clothes} = require(`../products.model`);
 const {ConflictErrorResponse} = require(`../../response/error.response`);
 const {getFields} = require(`../../ultils/index`);
 
@@ -115,4 +115,47 @@ const findProduct = async ({product_id, select}) => {
     return result;
 }
 
-module.exports = { findAllProductsWithQuery, publishAProduct, draftAProduct, findProductByUser, findAllProducts, findProduct };
+const updateProduct = async ({filter, updateData}) => {
+    const result = await products.findOneAndUpdate(filter, updateData, {new: true})
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to update product`});
+    });
+    return result;
+}
+
+const updateClothes = async ({filter, updateData}) => {
+    const result = await clothes.findOneAndUpdate(filter, updateData, {new: true})
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to update product`});
+    });
+    return result;
+}
+
+const updateElectronics = async ({filter, updateData}) => {
+    const result = await electronics.findOneAndUpdate(filter, updateData, {new: true})
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to update product`});
+    });
+    return result;
+}
+
+const updateFurnitures = async ({filter, updateData}) => {
+    const result = await furnitures.findOneAndUpdate(filter, updateData, {new: true})
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to update product`});
+    });
+    return result;
+}
+
+module.exports = { 
+    findAllProductsWithQuery, 
+    publishAProduct, 
+    draftAProduct, 
+    findProductByUser, 
+    findAllProducts, 
+    findProduct,
+    updateProduct,
+    updateClothes,
+    updateElectronics,
+    updateFurnitures,
+};

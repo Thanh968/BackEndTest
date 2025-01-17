@@ -11,7 +11,23 @@ const getFields = (select = []) => {
     return result;
 }
 
+const removeNullField = (object) => {
+    Object.keys(object).forEach(key => {
+        if (object[key] == null) {
+            delete object[key];
+        }
+    });
+    return object;
+} 
+
+const checkRequiredFields = (object, fields) => {
+    const result = fields.every(field => field in object);
+    return result;
+}
+
 module.exports = {
     getDataField,
-    getFields
+    getFields,
+    removeNullField,
+    checkRequiredFields
 };
