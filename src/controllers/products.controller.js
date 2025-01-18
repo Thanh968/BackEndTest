@@ -74,6 +74,15 @@ class ProductsController {
             }),
         }).send(res);
     }
+
+    static async deleteProduct(req, res, next) {
+        new OkSuccessResponse({
+            message: (await ProductService.deleteProduct({
+                product_shop: req.decodeData.userId,
+                ...req.body,
+            })).message,
+        }).send(res);
+    }
 }
 
 module.exports = ProductsController

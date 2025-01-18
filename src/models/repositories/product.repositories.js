@@ -1,6 +1,6 @@
 "use strict"
 
-const {products, clothes} = require(`../products.model`);
+const {products, clothes,electronics, furnitures} = require(`../products.model`);
 const {ConflictErrorResponse} = require(`../../response/error.response`);
 const {getFields} = require(`../../ultils/index`);
 
@@ -147,6 +147,54 @@ const updateFurnitures = async ({filter, updateData}) => {
     return result;
 }
 
+const deleteProduct = async ({product_id, product_shop}) => {
+    const {deletedCount} = await products.deleteOne({
+        product_shop: product_shop,
+        _id: product_id,
+    })
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to delete product`});
+    });
+
+    return deletedCount;
+}
+
+const deleteClothes = async ({product_id, product_shop}) => {
+    const {deletedCount} = await clothes.deleteOne({
+        product_shop: product_shop,
+        _id: product_id,
+    })
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to delete product`});
+    });
+
+    return deletedCount;
+}
+
+const deleteElectronics = async ({product_id, product_shop}) => {
+    const {deletedCount} = await electronics.deleteOne({
+        product_shop: product_shop,
+        _id: product_id,
+    })
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to delete product`});
+    });
+
+    return deletedCount;
+}
+
+const deleteFurnitures = async ({product_id, product_shop}) => {
+    const {deletedCount} = await furnitures.deleteOne({
+        product_shop: product_shop,
+        _id: product_id,
+    })
+    .catch(error => {
+        throw new ConflictErrorResponse({message: `Error: fail to delete product`});
+    });
+
+    return deletedCount;
+}
+
 module.exports = { 
     findAllProductsWithQuery, 
     publishAProduct, 
@@ -158,4 +206,8 @@ module.exports = {
     updateClothes,
     updateElectronics,
     updateFurnitures,
+    deleteProduct,
+    deleteClothes,
+    deleteElectronics,
+    deleteFurnitures,
 };

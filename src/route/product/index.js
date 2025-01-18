@@ -12,6 +12,7 @@ router.patch(`/update-product/`, asyncErrorHandling(ProductsController.updatePro
 router.get(`/draft/all/:skip`, asyncErrorHandling(ProductsController.findAllDraftProducts));
 router.get(`/publish/all/:skip`, asyncErrorHandling(ProductsController.findAllPublishProducts));
 router.post(`/publish/:product_id`, asyncErrorHandling(ProductsController.publishAProduct));
-router.post(`/draft/:product_id`, asyncErrorHandling(ProductsController.draftAProduct));   
+router.post(`/draft/:product_id`, asyncErrorHandling(ProductsController.draftAProduct));
+router.delete(`/delete`, asyncErrorHandling(ProductsController.deleteProduct));  
 
 module.exports = router;

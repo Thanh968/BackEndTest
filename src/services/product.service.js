@@ -1,7 +1,7 @@
 'use strict'
 
 const {products, clothes, electronics, furnitures} = require('../models/products.model');
-const {ConflictErrorResponse} = require(`../response/error.response`);
+const {ConflictErrorResponse, BadRequestErrorResponse} = require(`../response/error.response`);
 const { 
     checkRequiredFields, 
     getFields, 
@@ -18,7 +18,11 @@ const {
     updateProduct,
     updateClothes,
     updateElectronics,
-    updateFurnitures
+    updateFurnitures,
+    deleteProduct,
+    deleteClothes,
+    deleteElectronics,
+    deleteFurnitures,
 } = require(`../models/repositories/product.repositories`);
 
 class Product {
@@ -54,6 +58,17 @@ class Product {
         }
 
         return result;
+    }
+
+    async deleteProduct() {
+        const deletedCount = await deleteProduct({product_id: this.product_id, product_shop: this.product_shop});
+        let message = `Product not found`;
+
+        if (deletedCount === 1) {
+            message = `Product deleted successfully`;
+        }
+
+        return {message};
     }
 }
 
@@ -106,6 +121,17 @@ class Clothes extends Product {
 
         return result;
     }
+
+    async deleteProduct() {
+        const deletedCount = await deleteClothes({product_id: this.product_id, product_shop: this.product_shop});
+        let message = `Product not found`;
+
+        if (deletedCount === 1) {
+            message = (await super.deleteProduct()).message;
+        }
+
+        return {message};
+    }
 }
 
 class Electronic extends Product {
@@ -156,6 +182,17 @@ class Electronic extends Product {
         const result = await super.updateProduct();
 
         return result;
+    }
+
+    async deleteProduct() {
+        const deletedCount = await deleteElectronics({product_id: this.product_id, product_shop: this.product_shop});
+        let message = `Product not found`;
+
+        if (deletedCount === 1) {
+            message = (await super.deleteProduct()).message;
+        }
+
+        return {message};
     }
 }
 
@@ -211,6 +248,17 @@ class Furniture extends Product {
         const result = await super.updateProduct();
 
         return result;
+    }
+
+    async deleteProduct() {
+        const deletedCount = await deleteFurnitures({product_id: this.product_id, product_shop: this.product_shop});
+        let message = `Product not found`;
+
+        if (deletedCount === 1) {
+            message = (await super.deleteProduct()).message;
+        }
+
+        return {message};
     }
 }
 
@@ -306,7 +354,26 @@ class ProductFactory {
 
         return result;
     }
+
+    static async deleteProduct({product_id, product_shop, product_type}) {
+        if (!product_id || !product_shop || !product_type) {
+            throw new BadRequestErrorResponse({message: `Error: product_id, product_shop, product_type are required`});
+        }
+
+        const productClass = ProductFactory.productRegistry[product_type];
+
+        if (!productClass) {
+            throw new BadRequestErrorResponse({message: `Error: product type ${product_type} is not registered`});
+        }
+
+        const newObject = new productClass({product_type, product_shop});
+        newObject.product_id = product_id;
+        const result = await newObject.deleteProduct();
+
+        return result;
+    }
 }
+
 
 ProductFactory.registryProduct({product_type: 'Clothes', productClass: Clothes});
 ProductFactory.registryProduct({product_type: 'Electronic', productClass: Electronic});
