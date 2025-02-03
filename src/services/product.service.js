@@ -25,6 +25,10 @@ const {
     deleteFurnitures,
 } = require(`../models/repositories/product.repositories`);
 
+const {
+    insertInventory
+} = require('../models/repositories/inventory.repo');
+
 class Product {
     constructor({
         product_name, product_description, product_thumb, product_type, product_price, product_quantity,
@@ -42,6 +46,15 @@ class Product {
 
     async createProduct() {
         const newProduct = await products.create(this);
+
+        if (newProduct) {
+            await insertInventory({
+                productId: newProduct._id,
+                shopId: this.product_shop,
+                stock: this.product_attributes,
+            });
+        }
+
         return newProduct;
     }
 
