@@ -34,6 +34,6 @@ const inventorySchema = new Schema({
     collection: COLLECTION_NAME
 });
 
-module.exports1 = {
+module.exports = {
     inventory: model(DOCUMENT_NAME, inventorySchema)
 }

@@ -48,10 +48,13 @@ class Product {
         const newProduct = await products.create(this);
 
         if (newProduct) {
+            console.log(`product id: ${newProduct._id}`);
+            console.log(`shop id: ${this.product_shop}`);
+            console.log(`stock: ${this.product_quantity}`);
             await insertInventory({
                 productId: newProduct._id,
                 shopId: this.product_shop,
-                stock: this.product_attributes,
+                stock: this.product_quantity,
             });
         }
 
