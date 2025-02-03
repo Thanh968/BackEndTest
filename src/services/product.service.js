@@ -83,10 +83,9 @@ class Clothes extends Product {
             throw new ConflictErrorResponse({message: `Error: fail to create new clothes attribute`});
         }
 
-        const newProduct = await products.create({
-            ...this,
-            _id: newClothesAttribute._id
-        });
+        this._id = newClothesAttribute._id;
+
+        const newProduct = await super.createProduct();
 
         if (!newProduct) {
             const deletedDoc = await clothes.findByIdAndDelete(newClothesAttribute._id);
@@ -145,10 +144,8 @@ class Electronic extends Product {
             throw new ConflictErrorResponse({message: `Error: fail to create new electronic attribute`});
         }
 
-        const newProduct = await products.create({
-            ...this,
-            _id: newElectronicAttribute._id, 
-        });
+        this._id = newElectronicAttribute._id;
+        const newProduct = await super.createProduct();
 
         if (!newProduct) {
             const deletedDoc = await electronics.findByIdAndDelete(newElectronicAttribute._id);
@@ -209,10 +206,8 @@ class Furniture extends Product {
             });
         }
 
-        const newProduct = await products.create({
-            ...this,
-            _id: newFurnitureAttributes._id,
-        });
+        this._id = newFurnitureAttributes._id;
+        const newProduct = await super.createProduct();
 
         if (!newProduct) {
             const deletedDoc = await furnitures.findByIdAndDelete(newFurnitureAttributes._id);
