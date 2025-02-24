@@ -195,6 +195,15 @@ const deleteFurnitures = async ({product_id, product_shop}) => {
     return deletedCount;
 }
 
+const countExistProducts = async (shop_id, product_ids) => {
+    const result = await products.countDocuments({
+        _id: {$in: product_ids},
+        product_shop: shop_id
+    });
+
+    return result;
+}
+
 module.exports = { 
     findAllProductsWithQuery, 
     publishAProduct, 
@@ -210,4 +219,5 @@ module.exports = {
     deleteClothes,
     deleteElectronics,
     deleteFurnitures,
+    countExistProducts
 };
