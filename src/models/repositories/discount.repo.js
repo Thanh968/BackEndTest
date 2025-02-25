@@ -16,7 +16,13 @@ const checkDiscountExist = async (discount_shop_id, discount_code) => {
     return result;
 }
 
+const findOneDiscountWithQuery = async (query) => {
+    const result = await discountModel.findOne(query).lean();
+    return result;
+}
+
 module.exports = {
     createNewDiscount,
-    checkDiscountExist
+    checkDiscountExist,
+    findOneDiscountWithQuery
 }

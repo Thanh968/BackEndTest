@@ -9,7 +9,9 @@ const {
 } = require('../ultils/index');
 
 const { countExistProducts } =  require('../models/repositories/product.repositories');
-const { checkDiscountExist } = require('../models/repositories/discount.repo');
+const { 
+    checkDiscountExist,
+} = require('../models/repositories/discount.repo');
 
 const validateRequiredFields = (payload, required_fields) => {
     const missing_fields = findAllMissingFields(payload, required_fields);
@@ -114,7 +116,7 @@ const validateMaxUsesPerUser = (payload) => {
 }
 
 
-const validateDiscountExist = async (payload) => {
+const validateDiscounNotExist = async (payload) => {
     const is_discount_exist = await checkDiscountExist(convertStringToObjectId(payload.discount_shop_id), payload.discount_code);
 
     if (is_discount_exist) {
@@ -131,7 +133,7 @@ class DiscountValidator {
             validateDiscountType, validateDateData, validateDiscountMaxUses, 
             validateDiscountMinOrderValue, validateMaxUsesPerUser
         ];
-        const promise_validate_array = [validateDiscountAplliesTo, validateDiscountExist];
+        const promise_validate_array = [validateDiscountAplliesTo, validateDiscounNotExist];
 
         validateRequiredFields(payload, required_fields);
         validateNotAllowFields(payload, not_allow_fields);
@@ -142,6 +144,20 @@ class DiscountValidator {
 
         for (let i = 0; i < promise_validate_array.length; i++) {
             await promise_validate_array[i](payload);
+        }
+    }
+
+    static validateAppliedDiscountPayload(payload) {
+        const required_fields = ['discount_shop_id', 'discount_code', 'limit', 'page'];
+        validateRequiredFields(payload, required_fields);
+    }
+
+    static validateDateOfUseForDiscount(discount_start_date, discount_end_date) {
+        let current_date = new Date();
+        const is_valid_time = (discount_start_date <= current_date && current_date <= discount_end_date);
+
+        if (!is_valid_time) {
+            throw new BadRequestErrorResponse({message: `Error: Ma khuyen mai khong trong thoi gian su dung`});
         }
     }
 }

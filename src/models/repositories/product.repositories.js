@@ -4,7 +4,7 @@ const {products, clothes,electronics, furnitures} = require(`../products.model`)
 const {ConflictErrorResponse} = require(`../../response/error.response`);
 const {getFields} = require(`../../ultils/index`);
 
-const findAllProductsWithQuery = async ({query, limit, skip}) => {
+const findAllProductsWithQuery = async ({query, limit = 50, skip = 0}) => {
     const result = await products.find(query)
     .populate('product_shop', "name -_id")
     .skip(skip)
