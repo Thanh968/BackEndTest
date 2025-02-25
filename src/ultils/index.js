@@ -78,16 +78,19 @@ const isValidObjectIdFormat = (id_string) => {
 }
 
 const checkValidDateForEvent = (start_date, end_date) => {
-    const is_valid_event_date = (start_date < end_date) && (start_date > new Date());
+    const is_valid_event_date = (start_date < end_date) && (start_date >= new Date());
     return is_valid_event_date;
 }
 
 const convertStringToObjectId = (str_data) => {
-    const result = Types.ObjectId(str_data);
+    const result = new Types.ObjectId(str_data);
     return result;
 }
-}
 
+const findAllExistField = (object, field_array) => {
+    const result = field_array.filter(key => object[key] !== undefined);
+    return result;
+}
 module.exports = {
     getDataField,
     getFields,
@@ -97,5 +100,6 @@ module.exports = {
     convertStringToDate,
     isValidObjectIdFormat,
     checkValidDateForEvent,
-    convertStringToObjectId
+    convertStringToObjectId,
+    findAllExistField
 };

@@ -13,7 +13,7 @@ const discountSchema = new Schema({
     discount_code: {type: String, required: true, index: true},
     discount_start_date: {type: Date, required: true},
     discount_end_date: {type: Date, required: true},
-    discount_max_uses: {type: Number, required: true, min: [0, "Discount max uses must be a positive number"]},
+    discount_max_uses: {type: Number, default: Number.MAX_SAFE_INTEGER, min: [0, "Discount max uses must be a positive number"]},
     discount_uses_count: {type: Number, default: 0},
     discount_users_use: {type: Array, default: []},
     discount_max_uses_per_user: {type: Number, default: Number.MAX_SAFE_INTEGER, min: [0, "Discount max uses per user must be a positive number"]},

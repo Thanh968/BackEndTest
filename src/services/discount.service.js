@@ -4,37 +4,40 @@ const {
     convertStringToDate,
     isValidObjectIdFormat,
     checkValidDateForEvent,
-    convertStringToObjectId
+    convertStringToObjectId,
+    findAllExistField
 } = require("../ultils");
-const {BadRequestErrorResponse} = required("../response/error.response");
+const {BadRequestErrorResponse} = require("../response/error.response");
 
 const {
     countExistProducts
 } = require(`../models/repositories/product.repositories`);
 
 const {
-    createNewDiscount
+    createNewDiscount,
+    checkDiscountExist
 } = require("../models/repositories/discount.repo");
 
 class DiscountService {
     static async createDiscount(payload) {
         const required_fields = ["discount_name", "discount_description", "discount_value", "discount_code"
-            , "discount_start_date", "discount_end_date", "discount_max_uses", "discount_shop_id"];
+            , "discount_start_date", "discount_end_date", "discount_shop_id"];
         const not_allow_fields = ["discount_uses_count", "discount_users_use"];
+
         const missing_fields = findAllMissingFields(payload, required_fields);
-        const exist_not_allow_fields = findAllMissingFields(payload, not_allow_fields);
+        const exist_not_allow_fields = findAllExistField(payload, not_allow_fields);
 
         if (missing_fields.length > 0) {
             throw new BadRequestErrorResponse({message: `Missing fields: ${missing_fields.join(", ")}`});
         }
 
-        if (exist_not_allow_fields.length > 0) {
+        if (exist_not_allow_fields.length !== 0) {
             throw new BadRequestErrorResponse({message: `Not allow fields: ${exist_not_allow_fields.join(", ")}`});
         }
 
         const {discount_type} = payload;
 
-        if (discount_type) {
+        if (discount_type !== undefined) {
             if (discount_type !== "percentage" && discount_type !== "fixed_amount") {
                 throw new BadRequestErrorResponse({message: `Error: Invalid discount type`});
             } 
@@ -73,13 +76,13 @@ class DiscountService {
             throw new BadRequestErrorResponse({message: `Error: Invalid date value`});
         }
 
-        if (!payload.discount_min_order_value) {
+        if (payload.discount_min_order_value !== undefined) {
             if (payload.discount_min_order_value < 0) {
                 throw new BadRequestErrorResponse({message: `Error: min order value must be a non-negative number`});
             }
         }
 
-        if (!payload.discount_applies_to) {
+        if (payload.discount_applies_to !== undefined) {
             const {discount_applies_to} = payload;
 
             if (discount_applies_to !== "all" && discount_applies_to !== "specific") {
@@ -100,12 +103,26 @@ class DiscountService {
             }
         }
 
-        if (!payload.discount_max_uses_per_user) {
+        if (payload.discount_max_uses_per_user !== undefined) {
             const {discount_max_uses_per_user} = payload;
 
             if (discount_max_uses_per_user <= 0) {
                 throw new BadRequestErrorResponse({message: `Error: invalid max uses per user`});
             }
+        }
+
+        if (payload.discount_max_uses !== undefined) {
+            const {discount_max_uses} = payload;
+
+            if (discount_max_uses <= 0) {
+                throw new BadRequestErrorResponse({message: `Error: Invalid discount max uses`});
+            }
+        }
+
+        const is_discount_exist = await checkDiscountExist(convertStringToObjectId(payload.discount_shop_id), payload.discount_code);
+
+        if (is_discount_exist) {
+            throw new BadRequestErrorResponse({message: `Error: This code already exist`});
         }
 
         payload.discount_shop_id = convertStringToObjectId(payload.discount_shop_id);
@@ -119,3 +136,5 @@ class DiscountService {
 
     
 }
+
+module.exports = DiscountService
