@@ -1,6 +1,9 @@
 "use strict"
 
 const discountModel = require("../discount.model");
+const {
+    notGetFields
+} = require('../../ultils');
 
 const createNewDiscount = async (payload) => {
     const result = await discountModel.create(payload);
@@ -21,8 +24,18 @@ const findOneDiscountWithQuery = async (query) => {
     return result;
 }
 
+const findAllDiscountWithQuery = async (query, limit, page, unselect = []) => {
+    const result = await discountModel.find(query)
+        .limit(limit)
+        .skip(page - 1)
+        .select(notGetFields(unselect))
+        .lean();
+    return result;
+}
+
 module.exports = {
     createNewDiscount,
     checkDiscountExist,
-    findOneDiscountWithQuery
+    findOneDiscountWithQuery,
+    findAllDiscountWithQuery
 }

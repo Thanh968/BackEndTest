@@ -12,6 +12,11 @@ const getFields = (select = []) => {
     return result;
 }
 
+const notGetFields = (select = []) => {
+    const result = Object.fromEntries(select.map((item) => [item, 0]));
+    return result;
+}
+
 const removeNullField = (object) => {
     Object.keys(object).forEach(key => {
         if (object[key] == null) {
@@ -101,5 +106,6 @@ module.exports = {
     isValidObjectIdFormat,
     checkValidDateForEvent,
     convertStringToObjectId,
-    findAllExistField
+    findAllExistField,
+    notGetFields
 };

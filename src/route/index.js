@@ -9,6 +9,7 @@ route.get('/api/v1/', asyncErrorHandling(ProductController.findAllProducts));
 route.get('/api/v1/:id', asyncErrorHandling(ProductController.findProduct));
 route.get('/api/v1/products/:keySearch', asyncErrorHandling(ProductController.findProductByUser));
 route.get('/api/v1/discounts/products', asyncErrorHandling(DiscountController.getAllProductsAppliedByDiscount));
+route.get('/api/v1/discounts/shop', asyncErrorHandling(DiscountController.getAllDiscountOfShop));
 
 route.use(asyncErrorHandling(checkApiKey));
 route.use(asyncErrorHandling(checkPermission("0001")));

@@ -2,6 +2,7 @@
 
 const discountService = require("../services/discount.service");
 const { CreatedSuccessResponse, OkSuccessResponse} = require("../response/success.response");
+const DiscountService = require("../services/discount.service");
 
 class DiscountController {
     static createNewDiscount = async (req, res, next) => {
@@ -16,6 +17,18 @@ class DiscountController {
         new OkSuccessResponse({
             message: "Get all products apllied by discount success",
             metadata: await discountService.findAllProductAppliedByThisDiscount(req.body)
+        }).send(res);
+    }
+
+    static getAllDiscountOfShop = async (req, res, next) => {
+        const payload = {
+            shop_id: req.query['shop_id'],
+            page: req.query['page'],
+            limit: 50
+        };
+        new OkSuccessResponse({
+            message: "Get all discount of shop",
+            metadata: await DiscountService.getAllDiscountOfShop(payload)
         }).send(res);
     }
 }

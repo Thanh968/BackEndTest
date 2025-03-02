@@ -160,6 +160,11 @@ class DiscountValidator {
             throw new BadRequestErrorResponse({message: `Error: Ma khuyen mai khong trong thoi gian su dung`});
         }
     }
+
+    static validatePayloadGetAllDiscountOfShop(payload) {
+        const required_fields = ['shop_id', 'limit', 'page'];
+        validateRequiredFields(payload, required_fields);
+    }
 }
 
 module.exports = DiscountValidator;

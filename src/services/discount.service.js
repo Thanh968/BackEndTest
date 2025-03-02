@@ -6,7 +6,8 @@ const {
 const {BadRequestErrorResponse} = require("../response/error.response");
 const {
     createNewDiscount,
-    findOneDiscountWithQuery
+    findOneDiscountWithQuery,
+    findAllDiscountWithQuery
 } = require("../models/repositories/discount.repo");
 const DiscountValidator = require('../validators/discount.validator');
 const {
@@ -54,6 +55,20 @@ class DiscountService {
         const product_array = await findAllProductsWithQuery(query);
 
         return product_array;
+    }
+
+    static async getAllDiscountOfShop(payload) {
+        DiscountValidator.validatePayloadGetAllDiscountOfShop(payload);
+        const current_date = new Date();
+        const query = {
+            discount_shop_id: convertStringToObjectId(payload.shop_id),
+            discount_is_active: true,
+            discount_start_date: {$lte: current_date},
+            discount_end_date: {$gte: current_date}
+        };
+        const unselect = ['__v', 'discount_shop_id'];
+        const foundDiscounts = await findAllDiscountWithQuery(query, limit, page, unselect);
+        return foundDiscounts;
     }
 }
 
