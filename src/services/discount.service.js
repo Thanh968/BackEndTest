@@ -155,7 +155,7 @@ class DiscountService {
 
         const total_price = calculateTotalPrice(products);
         const discounted_amount = calculateDiscountAmount(amount_discounted_price, discount_type, discount_value);
-        const must_paid_money = total_price - discounted_amount;
+        const must_paid_money = (total_price - discounted_amount > 0) ? (total_price - discounted_amount) : 0;
 
         return {
             total_price,
