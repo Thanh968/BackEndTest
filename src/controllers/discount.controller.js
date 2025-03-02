@@ -31,6 +31,19 @@ class DiscountController {
             metadata: await DiscountService.getAllDiscountOfShop(payload)
         }).send(res);
     }
+
+    static getDiscountMoney = async(req, res, next) => {
+        const payload = {
+            discount_code: req.body['discount_code'],
+            discount_shop_id: req.body['discount_shop_id'],
+            user_id: req.decodeData.userId,
+            products: req.body['products']
+        };
+        new OkSuccessResponse({
+            message: "Get amount of discounted money success",
+            metadata: await DiscountService.getDiscountAmount(payload)
+        }).send(res);
+    }
 }
 
 module.exports = DiscountController;

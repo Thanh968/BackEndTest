@@ -6,7 +6,8 @@ const {
     convertStringToDate,
     checkValidDateForEvent,
     convertStringToObjectId,
-    isValidObjectIdFormat
+    isValidObjectIdFormat,
+    checkInputFieldType
 } = require('../ultils/index');
 
 const { countExistProducts } =  require('../models/repositories/product.repositories');
@@ -174,6 +175,24 @@ class DiscountValidator {
         if (page <= 0) {
             throw new BadRequestErrorResponse({message: `Error: Invalid page value`});
         }
+    }
+
+    static validatePayloadGetDiscountAmount(payload) {
+        const required_fields = ['discount_code', 'discount_shop_id', 'user_id', 'products'];
+        validateRequiredFields(payload, required_fields);
+        const schema = {
+            discount_code: 'string',
+            discount_shop_id: 'string',
+            user_id: 'string',
+            products: 'array'
+        };
+        if (!checkInputFieldType(payload, schema)) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid input field type`});
+        }
+        if (!isValidObjectIdFormat(payload['discount_shop_id']) || !isValidObjectIdFormat(payload['user_id'])) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid object id format`});
+        }
+
     }
 }
 

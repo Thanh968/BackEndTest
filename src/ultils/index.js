@@ -96,6 +96,26 @@ const findAllExistField = (object, field_array) => {
     const result = field_array.filter(key => object[key] !== undefined);
     return result;
 }
+
+const checkInputFieldType = (inputObject, schema) => {
+    let result = true;
+
+    for (let key in inputObject) {
+        const required_type = schema[key];
+        const actual_type = typeof inputObject[key];
+
+        if (required_type === 'array' && actual_type === 'object') {
+            if (!(inputObject[key] instanceof Array)) {
+                result = false;
+                break;
+            }
+        } else if (actual_type !== required_type) {
+            result = false;
+            break;
+        }
+    }
+    return result;
+}
 module.exports = {
     getDataField,
     getFields,
@@ -107,5 +127,6 @@ module.exports = {
     checkValidDateForEvent,
     convertStringToObjectId,
     findAllExistField,
-    notGetFields
+    notGetFields,
+    checkInputFieldType
 };
