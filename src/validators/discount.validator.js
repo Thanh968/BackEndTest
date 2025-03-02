@@ -5,7 +5,8 @@ const {
     findAllMissingFields,
     convertStringToDate,
     checkValidDateForEvent,
-    convertStringToObjectId
+    convertStringToObjectId,
+    isValidObjectIdFormat
 } = require('../ultils/index');
 
 const { countExistProducts } =  require('../models/repositories/product.repositories');
@@ -165,6 +166,10 @@ class DiscountValidator {
         const required_fields = ['shop_id', 'limit', 'page'];
         validateRequiredFields(payload, required_fields);
         const {page} = payload;
+
+        if (!isValidObjectIdFormat(payload['shop_id'])) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid object id format`});
+        }
 
         if (page <= 0) {
             throw new BadRequestErrorResponse({message: `Error: Invalid page value`});
