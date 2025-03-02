@@ -164,6 +164,11 @@ class DiscountValidator {
     static validatePayloadGetAllDiscountOfShop(payload) {
         const required_fields = ['shop_id', 'limit', 'page'];
         validateRequiredFields(payload, required_fields);
+        const {page} = payload;
+
+        if (page <= 0) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid page value`});
+        }
     }
 }
 
