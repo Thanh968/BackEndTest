@@ -67,6 +67,7 @@ class DiscountService {
             discount_end_date: {$gte: current_date}
         };
         const unselect = ['__v', 'discount_shop_id'];
+        const {limit, page} = payload;
         const foundDiscounts = await findAllDiscountWithQuery(query, limit, page, unselect);
         return foundDiscounts;
     }
