@@ -41,10 +41,16 @@ const deleteDiscount = async (discount_id) => {
     return deleted_discount;
 }
 
+const updateOneDiscount = async (id, update) => {
+    const result = await discountModel.findByIdAndUpdate(id, update, {new: true});
+    return result;
+}
+
 module.exports = {
     createNewDiscount,
     checkDiscountExist,
     findOneDiscountWithQuery,
     findAllDiscountWithQuery,
-    deleteDiscount
+    deleteDiscount,
+    updateOneDiscount
 }

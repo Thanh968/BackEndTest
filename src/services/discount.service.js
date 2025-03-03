@@ -8,7 +8,8 @@ const {
     createNewDiscount,
     findOneDiscountWithQuery,
     findAllDiscountWithQuery,
-    deleteDiscount
+    deleteDiscount,
+    updateOneDiscount
 } = require("../models/repositories/discount.repo");
 const DiscountValidator = require('../validators/discount.validator');
 const {
@@ -193,6 +194,27 @@ class DiscountService {
         }
 
         return deleted_discount;
+    }
+
+    static async removeDiscountFromUserCart(payload) {
+        DiscountValidator.validatePayloadRemoveDiscountFromCart(payload);
+        const {discount_code, discount_shop_id, user_id} = payload;
+        const current_date = new Date();
+        const found_discount = await findOneDiscountWithQuery({
+            discount_code: discount_code,
+            discount_shop_id: convertStringToObjectId(discount_shop_id),
+            discount_is_active: true,
+            discount_start_date: {$lte: current_date},
+            discount_end_date: {$gte: current_date}
+        });
+
+        if (found_discount === null) {
+            throw new BadRequestErrorResponse({message: `Error: discount not exist or not available`});
+        }
+
+        const result = await updateOneDiscount(found_discount._id, {$pull: {discount_users_use: convertStringToObjectId(user_id)}});
+
+        return result;
     }
 }
 

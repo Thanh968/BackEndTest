@@ -55,6 +55,18 @@ class DiscountController {
             metadata: await DiscountService.deleteDiscount(payload)
         }).send(res);
     }
+
+    static removeDiscountFromCart = async (req, res, next) => {
+        const payload = {
+            discount_code: req.body['discount_code'],
+            discount_shop_id: req.body['discount_shop_id'],
+            user_id: req.decodeData.userId
+        };
+        new OkSuccessResponse({
+            message: "remove success",
+            metadata: await DiscountService.removeDiscountFromUserCart(payload)
+        }).send(res);
+    }
 }
 
 module.exports = DiscountController;

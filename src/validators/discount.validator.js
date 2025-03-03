@@ -209,6 +209,24 @@ class DiscountValidator {
             throw new BadRequestErrorResponse({message: `Error: Invalid object id format`});
         }
     }
+
+    static validatePayloadRemoveDiscountFromCart(payload) {
+        const required_fields = ["discount_code", "discount_shop_id", "user_id"];
+        const schema = {
+            discount_code: "string",
+            discount_shop_id: "string",
+            user_id: "string"
+        };
+        validateRequiredFields(payload, required_fields);
+        if (!checkInputFieldType(payload, schema)) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid field type`});
+        }
+        const {discount_shop_id, user_id} = payload;
+        const is_all_object_id = (isValidObjectIdFormat(discount_shop_id) && isValidObjectIdFormat(user_id));
+        if (is_all_object_id === false) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid object Id format`});
+        }
+    }
 }
 
 module.exports = DiscountValidator;
