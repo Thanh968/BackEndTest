@@ -11,5 +11,6 @@ route.use(asyncErrorHandling(checkAuthentication));
 
 route.post("/", asyncErrorHandling(discountController.createNewDiscount));
 route.get("/discount-amount", asyncErrorHandling(DiscountController.getDiscountMoney));
+route.delete('/', asyncErrorHandling(discountController.deleteDiscount));
 
 module.exports = route;

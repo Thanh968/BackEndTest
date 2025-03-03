@@ -194,6 +194,21 @@ class DiscountValidator {
         }
 
     }
+
+    static validatePayloadDeleteDiscount(payload) {
+        const required_fields = ['discount_shop_id', 'discount_code'];
+        const schema = {
+            discount_shop_id: 'string',
+            discount_code: 'string'
+        };
+        validateRequiredFields(payload, required_fields);
+        if (!checkInputFieldType(payload, schema)) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid input field type`});
+        }
+        if (!isValidObjectIdFormat(payload.discount_shop_id)) {
+            throw new BadRequestErrorResponse({message: `Error: Invalid object id format`});
+        }
+    }
 }
 
 module.exports = DiscountValidator;

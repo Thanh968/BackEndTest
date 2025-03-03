@@ -7,12 +7,16 @@ const {BadRequestErrorResponse} = require("../response/error.response");
 const {
     createNewDiscount,
     findOneDiscountWithQuery,
-    findAllDiscountWithQuery
+    findAllDiscountWithQuery,
+    deleteDiscount
 } = require("../models/repositories/discount.repo");
 const DiscountValidator = require('../validators/discount.validator');
 const {
     findAllProductsWithQuery
 } = require("../models/repositories/product.repositories");
+const {
+    insertDeletedDiscount
+} = require('../models/repositories/deletedDiscount.repo');
 
 const calculateTotalAmountOfDiscounted = (products, applied_products, applies_to) => {
     let result = 0;
@@ -162,6 +166,33 @@ class DiscountService {
             discounted_amount,
             must_paid_money
         };
+    }
+
+    static async deleteDiscount(payload) {
+        DiscountValidator.validatePayloadDeleteDiscount(payload);
+        const {discount_shop_id, discount_code} = payload;
+        const found_discount = await findOneDiscountWithQuery({
+            discount_shop_id: convertStringToObjectId(discount_shop_id),
+            discount_code: discount_code
+        });
+        
+        if (found_discount === null) {
+            throw new BadRequestErrorResponse({message: `Error: Not found discount`});
+        }
+
+        const deleted_discount = await deleteDiscount(found_discount._id);
+
+        if (deleted_discount === null) {
+            throw new BadRequestErrorResponse({message: `Error: fail to delete discount`});
+        }
+
+        const saved_deleted_discount = await insertDeletedDiscount(found_discount);
+
+        if (saved_deleted_discount === null) {
+            throw new BadRequestErrorResponse({message: `Error: save deleted discount fail`});
+        }
+
+        return deleted_discount;
     }
 }
 

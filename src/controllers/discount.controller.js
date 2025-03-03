@@ -44,6 +44,17 @@ class DiscountController {
             metadata: await DiscountService.getDiscountAmount(payload)
         }).send(res);
     }
+
+    static deleteDiscount = async (req, res, next) => {
+        const payload = {
+            discount_shop_id: req.decodeData.userId,
+            discount_code: req.body.discount_code
+        };
+        new OkSuccessResponse({
+            message: 'Delete discount success',
+            metadata: await DiscountService.deleteDiscount(payload)
+        }).send(res);
+    }
 }
 
 module.exports = DiscountController;

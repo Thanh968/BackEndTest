@@ -2,7 +2,8 @@
 
 const discountModel = require("../discount.model");
 const {
-    notGetFields
+    notGetFields,
+    convertStringToObjectId
 } = require('../../ultils');
 
 const createNewDiscount = async (payload) => {
@@ -19,8 +20,10 @@ const checkDiscountExist = async (discount_shop_id, discount_code) => {
     return result;
 }
 
-const findOneDiscountWithQuery = async (query) => {
-    const result = await discountModel.findOne(query).lean();
+const findOneDiscountWithQuery = async (query, unselect = []) => {
+    const result = await discountModel.findOne(query)
+        .select(notGetFields(unselect))
+        .lean();
     return result;
 }
 
@@ -33,9 +36,15 @@ const findAllDiscountWithQuery = async (query, limit, page, unselect = []) => {
     return result;
 }
 
+const deleteDiscount = async (discount_id) => {
+    const deleted_discount = await discountModel.findByIdAndDelete(convertStringToObjectId(discount_id));
+    return deleted_discount;
+}
+
 module.exports = {
     createNewDiscount,
     checkDiscountExist,
     findOneDiscountWithQuery,
-    findAllDiscountWithQuery
+    findAllDiscountWithQuery,
+    deleteDiscount
 }
