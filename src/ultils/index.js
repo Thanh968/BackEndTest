@@ -116,6 +116,22 @@ const checkInputFieldType = (inputObject, schema) => {
     }
     return result;
 }
+
+const areAllStringNonEmpty = (arr) => {
+    const result = arr.every(str => str.trim() !== '');
+    return result;
+}
+
+const areAllNumberPositive = (arr) => {
+    const result = arr.every(num => num >= 0);
+    return result;
+}
+
+const areAllIDObjectId = (arr) => {
+    const result = arr.every(id => isValidObjectIdFormat(id));
+    return result;
+}
+
 module.exports = {
     getDataField,
     getFields,
@@ -128,5 +144,8 @@ module.exports = {
     convertStringToObjectId,
     findAllExistField,
     notGetFields,
-    checkInputFieldType
+    checkInputFieldType,
+    areAllStringNonEmpty,
+    areAllNumberPositive,
+    areAllIDObjectId
 };

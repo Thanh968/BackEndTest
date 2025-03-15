@@ -29,6 +29,8 @@ const {
     insertInventory
 } = require('../models/repositories/inventory.repo');
 
+const ProductValidator = require(`../validators/product.validator`);
+
 class Product {
     constructor({
         product_name, product_description, product_thumb, product_type, product_price, product_quantity,
@@ -282,6 +284,8 @@ class ProductFactory {
     }
 
     static createProduct(payload) {
+        ProductValidator.validateCreateProductPayload(payload);
+        
         const ProductClass = ProductFactory.productRegistry[payload.product_type];
 
         if (!ProductClass) {

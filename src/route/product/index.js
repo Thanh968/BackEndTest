@@ -7,10 +7,10 @@ const {asyncErrorHandling} = require(`../../helper`);
 const {checkAuthentication} = require(`../../auth/auth`);
 
 router.use(asyncErrorHandling(checkAuthentication));
-router.post(`/create-product`, asyncErrorHandling(ProductsController.createProduct));
-router.patch(`/update-product/`, asyncErrorHandling(ProductsController.updateProduct));
+router.post(`/`, asyncErrorHandling(ProductsController.createProduct));
+router.patch(`/`, asyncErrorHandling(ProductsController.updateProduct));
 router.get(`/draft/all/:skip`, asyncErrorHandling(ProductsController.findAllDraftProducts));
-router.get(`/publish/all/:skip`, asyncErrorHandling(ProductsController.findAllPublishProducts));
+router.get(`/published/all/:skip`, asyncErrorHandling(ProductsController.findAllPublishProducts));
 router.post(`/publish/:product_id`, asyncErrorHandling(ProductsController.publishAProduct));
 router.post(`/draft/:product_id`, asyncErrorHandling(ProductsController.draftAProduct));
 router.delete(`/delete`, asyncErrorHandling(ProductsController.deleteProduct));  
