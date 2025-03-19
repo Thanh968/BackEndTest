@@ -39,6 +39,7 @@ class ProductsController {
     }
 
     static async findProductByUser(req, res, next) {
+        console.log(req.params);
         new OkSuccessResponse({
             message: `Products fetched successfully`,
             metadata: await ProductService.findProductByUser(req.params),

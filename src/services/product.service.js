@@ -338,6 +338,7 @@ class ProductFactory {
     }
 
     static async findProductByUser({keySearch}) {
+        ProductValidator.validateFindProductByUserPayload({keySearch});
         const result = await findProductByUser({keySearch});
         return result;
     }

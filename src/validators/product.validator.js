@@ -128,6 +128,25 @@ class ProductValidator {
             throw new BadRequestErrorResponse({message: 'Error: Invalid shop id'});
         }
     }
+
+    static validateFindProductByUserPayload(payload) {
+        const required_fields = ['keySearch'];
+        const schema = {
+            'keySearch': 'string'
+        };
+
+        const is_enough_field = checkRequiredFields(payload, required_fields);
+
+        if (is_enough_field === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Missing required fields'});
+        }
+
+        const is_valid_fields = checkInputFieldType(payload, schema);
+
+        if (is_valid_fields === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
+        }
+    }
 }
 
 module.exports = ProductValidator;
