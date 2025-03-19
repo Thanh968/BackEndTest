@@ -312,6 +312,7 @@ class ProductFactory {
     }
 
     static async findAllPublishedProduct({product_shop, skip, limit = 50}) {
+        ProductValidator.validateFindAllDraftProductPayload({product_shop, skip, limit});
         const query = {
             product_shop: product_shop,
             isPublish: true,
