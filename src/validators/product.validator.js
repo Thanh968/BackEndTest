@@ -96,6 +96,38 @@ class ProductValidator {
             throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
         }
     }
+
+    static validatePublishAProductPayload(payload) {
+        const required_fields = ['product_id', 'product_shop']; 
+        const schema = {
+            'product_id': 'string',
+            'product_shop': 'string'
+        };
+
+        const is_enough_field = checkRequiredFields(payload, required_fields);
+
+        if (is_enough_field === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Missing required fields'});
+        }
+
+        const is_valid_fields = checkInputFieldType(payload, schema);
+
+        if (is_valid_fields === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
+        }
+
+        const {
+            product_id,
+            product_shop
+        } = payload;
+
+        const id_string_arr = [product_id, product_shop];
+        const is_all_id_objectid = areAllIDObjectId(id_string_arr);
+
+        if (is_all_id_objectid === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Invalid shop id'});
+        }
+    }
 }
 
 module.exports = ProductValidator;

@@ -6,7 +6,8 @@ const {
     checkRequiredFields, 
     getFields, 
     removeNullField,
-    getDataField
+    getDataField,
+    convertStringToObjectId
 } = require(`../ultils/index`);
 const {
     findAllProductsWithQuery, 
@@ -323,7 +324,10 @@ class ProductFactory {
     }
 
     static async publishAProduct({product_id, product_shop}) {
-        const result = await publishAProduct({product_id, product_shop});
+        ProductValidator.validatePublishAProductPayload({product_id, product_shop});
+
+        const object_id = convertStringToObjectId(product_id);
+        const result = await publishAProduct({ product_id: object_id, product_shop: product_shop });
         return result;
     }
 

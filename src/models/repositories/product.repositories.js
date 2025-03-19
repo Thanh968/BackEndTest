@@ -16,10 +16,10 @@ const findAllProductsWithQuery = async ({query, limit = 50, skip = 0}) => {
 }
 
 const publishAProduct = async ({product_id, product_shop}) => {
-    const holderProduct = await products.findOneAndUpdate({
+    const holderProduct = await products.findOne({
         product_shop: product_shop,
         _id: product_id,
-        isDraft: false,
+        isDraft: true,
     });
 
     if (!holderProduct) {
