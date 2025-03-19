@@ -283,7 +283,7 @@ class ProductFactory {
         ProductFactory.productRegistry[product_type] = productClass;
     }
 
-    static createProduct(payload) {
+    static async createProduct(payload) {
         ProductValidator.validateCreateProductPayload(payload);
         
         const ProductClass = ProductFactory.productRegistry[payload.product_type];
@@ -292,7 +292,10 @@ class ProductFactory {
             throw new ConflictErrorResponse({message: `Error: product type ${product_type} is not registered`});
         }
 
-        return new ProductClass(payload).createProduct();
+        const new_product = new ProductClass(payload);
+        const result = await new_product.createProduct();
+
+        return result;
     }
 
     static async findAllDraftProduct({product_shop, skip, limit = 50}) {

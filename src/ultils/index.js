@@ -100,7 +100,7 @@ const findAllExistField = (object, field_array) => {
 const checkInputFieldType = (inputObject, schema) => {
     let result = true;
 
-    for (let key in inputObject) {
+    for (let key in schema) {
         const required_type = schema[key];
         const actual_type = typeof inputObject[key];
 

@@ -27,13 +27,13 @@ class ProductValidator {
         const is_enough_field = checkRequiredFields(payload, required_fields);
         
         if (is_enough_field === false) {
-            throw new BadRequestErrorResponse('Error: Missing required fields');
+            throw new BadRequestErrorResponse({message: 'Error: Missing required fields'});
         }
 
         const is_valid_date = checkInputFieldType(payload, schema);
 
         if (is_valid_date === false) {
-            throw new BadRequestErrorResponse('Error: Invalid input field type');
+            throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
         }
 
         const {
@@ -52,19 +52,19 @@ class ProductValidator {
         const is_all_id_objectid = areAllIDObjectId(id_string_arr);
 
         if (is_all_id_objectid === false) {
-            throw new BadRequestErrorResponse('Error: Invalid shop id');
+            throw new BadRequestErrorResponse({message: 'Error: Invalid shop id'});
         }
 
         const is_all_str_non_empty = areAllStringNonEmpty(str_arr);
 
         if (is_all_str_non_empty === false) {
-            throw new BadRequestErrorResponse('Error: Empty string');
+            throw new BadRequestErrorResponse({message: 'Error: Empty string'});
         }
 
         const is_all_num_positive = areAllNumberPositive(num_arr);
 
         if (is_all_num_positive === false) {
-            throw new BadRequestErrorResponse('Error: Negative number');
+            throw new BadRequestErrorResponse({message: 'Error: Negative number'});
         }
     }   
 }
