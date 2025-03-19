@@ -13,7 +13,7 @@ class ProductsController {
     static async findAllDraftProducts(req, res, next) {
         new OkSuccessResponse({
             message: `Draft products fetched successfully`,
-            metadata: await ProductService.findAllDraftProduct({product_shop: req.decodeData.userId, skip: req.params.skip}),
+            metadata: await ProductService.findAllDraftProduct({product_shop: req.decodeData.userId, skip: req.params.skip, limit: 50}),
         }).send(res);
     }
 

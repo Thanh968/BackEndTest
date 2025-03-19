@@ -298,7 +298,10 @@ class ProductFactory {
         return result;
     }
 
-    static async findAllDraftProduct({product_shop, skip, limit = 50}) {
+    static async findAllDraftProduct(payload) {
+        ProductValidator.validateFindAllDraftProductPayload(payload);
+        const {product_shop, skip, limit = 50} = payload;
+
         const query = {
             product_shop: product_shop,
             isDraft: true,

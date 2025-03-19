@@ -104,6 +104,9 @@ const checkInputFieldType = (inputObject, schema) => {
         const required_type = schema[key];
         const actual_type = typeof inputObject[key];
 
+        console.log('required_type', required_type);
+        console.log('actual_type', actual_type);
+
         if (required_type === 'array' && actual_type === 'object') {
             if (!(inputObject[key] instanceof Array)) {
                 result = false;

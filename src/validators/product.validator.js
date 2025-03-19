@@ -30,9 +30,9 @@ class ProductValidator {
             throw new BadRequestErrorResponse({message: 'Error: Missing required fields'});
         }
 
-        const is_valid_date = checkInputFieldType(payload, schema);
+        const is_valid_fields = checkInputFieldType(payload, schema);
 
-        if (is_valid_date === false) {
+        if (is_valid_fields === false) {
             throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
         }
 
@@ -66,7 +66,36 @@ class ProductValidator {
         if (is_all_num_positive === false) {
             throw new BadRequestErrorResponse({message: 'Error: Negative number'});
         }
-    }   
+    }
+    
+    static validateFindAllDraftProductPayload(payload) {
+        const required_fields = ['product_shop', 'skip', 'limit']; 
+        const schema = {
+            'product_shop': 'string',
+            'skip': 'number',
+            'limit': 'number'
+        };
+
+
+        const is_enough_field = checkRequiredFields(payload, required_fields);
+
+        if (is_enough_field === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Missing required fields'});
+        }
+
+        payload.limit = parseInt(payload.limit);
+        payload.skip = parseInt(payload.skip);
+
+        if (isNaN(payload.limit) || isNaN(payload.skip)) {
+            throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
+        }
+
+        const is_valid_fields = checkInputFieldType(payload, schema);
+
+        if (is_valid_fields === false) {
+            throw new BadRequestErrorResponse({message: 'Error: Invalid input field type'});
+        }
+    }
 }
 
 module.exports = ProductValidator;
