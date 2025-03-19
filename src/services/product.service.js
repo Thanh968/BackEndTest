@@ -332,6 +332,7 @@ class ProductFactory {
     }
 
     static async draftAProduct({product_id, product_shop}) {
+        ProductValidator.validatePublishAProductPayload({product_id, product_shop});
         const result = await draftAProduct({product_id, product_shop});
         return result;
     }

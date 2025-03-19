@@ -40,7 +40,7 @@ const publishAProduct = async ({product_id, product_shop}) => {
 }
 
 const draftAProduct = async ({product_id, product_shop}) => {
-    const holderProduct = await products.findOneAndUpdate({
+    const holderProduct = await products.findOne({
         product_shop: product_shop,
         _id: product_id,
         isPublish: true,
